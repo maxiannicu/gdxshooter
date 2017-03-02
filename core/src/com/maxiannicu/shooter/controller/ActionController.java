@@ -1,4 +1,7 @@
-package com.maxiannicu.shooter.bodies.action;
+package com.maxiannicu.shooter.controller;
+
+import com.maxiannicu.shooter.bodies.PhysicsBody;
+import com.maxiannicu.shooter.bodies.action.Action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +9,10 @@ import java.util.List;
 /**
  * Created by nicu on 3/2/17.
  */
-public class ActionManager {
+public class ActionController implements Controller {
     private List<Action> actionList = new ArrayList<Action>();
 
+    @Override
     public void step(){
         List<Action> doneActions = new ArrayList<Action>();
         for (Action action:actionList) {
@@ -20,20 +24,16 @@ public class ActionManager {
         actionList.removeAll(doneActions);
     }
 
-    public void addAction(Action action){
-        addAction(action,false);
-    }
-
     public void addAction(Action action,boolean removeAffecting){
         if (removeAffecting)
-            removeExistingAction(action);
+            removeExistingActions(action.getAffectedBody());
         actionList.add(action);
     }
 
-    private void removeExistingAction(Action action) {
+    public void removeExistingActions(PhysicsBody body) {
         Action actionForBody = null;
         for (Action it : actionList) {
-            if (it.getAffectedBody().equals(action.getAffectedBody()))
+            if (it.getAffectedBody().equals(body))
                 actionForBody = it;
         }
         if (actionForBody != null){

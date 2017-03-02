@@ -5,13 +5,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.maxiannicu.shooter.bodies.Player;
 import com.maxiannicu.shooter.bodies.Zombie;
-import com.maxiannicu.shooter.bodies.action.ActionManager;
-import com.maxiannicu.shooter.bodies.action.MoveToAction;
 import com.maxiannicu.shooter.bodies.action.MoveToWithRotationAction;
 import com.maxiannicu.shooter.rendering.Renderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by nicu on 3/2/17.
@@ -19,14 +18,15 @@ import java.util.List;
 public class ZombieController implements Controller {
     private final List<Zombie> list = new ArrayList<Zombie>();
     private final World world;
-    private final ActionManager actionManager;
+    private final ActionController actionController;
     private final Player player;
     private final Renderer renderer;
+    private final Random random = new Random();
     private int maxZombies = 5;
 
-    public ZombieController(World world, ActionManager actionManager, Player player, Renderer renderer) {
+    public ZombieController(World world, ActionController actionController, Player player, Renderer renderer) {
         this.world = world;
-        this.actionManager = actionManager;
+        this.actionController = actionController;
         this.player = player;
         this.renderer = renderer;
     }
@@ -35,7 +35,7 @@ public class ZombieController implements Controller {
     public void step(){
         spawnZombies();
         for (Zombie zombie : list){
-            actionManager.addAction(new MoveToWithRotationAction(player.getPosition(),zombie),true);
+            actionController.addAction(new MoveToWithRotationAction(player.getPosition(),zombie),true);
         }
     }
 
@@ -65,10 +65,23 @@ public class ZombieController implements Controller {
     }
 
     private Vector2 getRandomPosition(){
-        float y = (float)Math.random() * Gdx.graphics.getHeight();
-        float x = (float)Math.random() * Gdx.graphics.getWidth();
+        Vector2 position = Vector2.Zero;
+        switch (random.nextInt(4)){
+            case 1:
+                position = new Vector2(random.nextInt(Gdx.graphics.getWidth()),-100);
+                break;
+            case 2:
+                position = new Vector2(Gdx.graphics.getWidth()+100,random.nextInt(Gdx.graphics.getHeight()));
+                break;
+            case 3:
+                position = new Vector2(random.nextInt(Gdx.graphics.getWidth()),Gdx.graphics.getHeight()+100);
+                break;
+            case 4:
+                position = new Vector2(-100,random.nextInt(Gdx.graphics.getHeight()));
+                break;
+        }
 
-        return new Vector2(x,y);
+        return position;
     }
 
 }

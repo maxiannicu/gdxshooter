@@ -28,7 +28,7 @@ public class Bullet extends DynamicPhysicsBody {
     public FixtureDef getFixtureDef() {
         FixtureDef fixtureDef = new FixtureDef();
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(getHeight(),getWidth());
+        polygonShape.setAsBox(getWidth(),getHeight());
         fixtureDef.shape = polygonShape;
         return fixtureDef;
     }

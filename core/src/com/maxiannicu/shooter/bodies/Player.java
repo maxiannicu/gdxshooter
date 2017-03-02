@@ -12,6 +12,8 @@ public class Player extends DynamicPhysicsBody {
     private final static float MAX_VELOCITY = 400;
     private int health = 100;
 
+    private int kills = 0;
+
     public Player(World world) {
         super(world,"hitman.png");
     }
@@ -38,5 +40,13 @@ public class Player extends DynamicPhysicsBody {
 
     public int getHealth() {
         return health;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
     }
 }

@@ -21,6 +21,6 @@ public class PlayerStatsRender implements Renderable {
 
     @Override
     public void render(Batch batch) {
-        font.draw(batch,String.format("%d",player.getHealth()), Gdx.graphics.getWidth()/2,100);
+        font.draw(batch,String.format("Health : %d\nKills : %d",player.getHealth(),player.getKills()), Gdx.graphics.getWidth()/2,100);
     }
 }

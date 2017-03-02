@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.maxiannicu.shooter.bodies.Ground;
 import com.maxiannicu.shooter.bodies.Player;
-import com.maxiannicu.shooter.bodies.action.ActionManager;
+import com.maxiannicu.shooter.controller.ActionController;
 import com.maxiannicu.shooter.controller.BulletController;
 import com.maxiannicu.shooter.controller.ContactController;
 import com.maxiannicu.shooter.controller.Controller;
@@ -19,13 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShooterGame extends ApplicationAdapter {
+    private final static boolean DEBUG = false;
     private Player player;
     private World world;
     private Box2DDebugRenderer debugRenderer;
-    private ActionManager actionManager;
     private Ground ground;
     private PlayerControl processor;
     private Renderer renderer;
+    private ActionController actionController;
     private ZombieController zombieController;
     private BulletController bulletController;
     private ContactController contactController;
@@ -58,7 +59,8 @@ public class ShooterGame extends ApplicationAdapter {
         stepControllers();
         simulatePhysics();
         renderer.render();
-        debugRenderer.render(world,renderer.getBatch().getProjectionMatrix());
+        if (DEBUG)
+            debugRenderer.render(world,renderer.getBatch().getProjectionMatrix());
     }
 
     @Override
@@ -68,7 +70,6 @@ public class ShooterGame extends ApplicationAdapter {
 
     private void simulatePhysics() {
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
-        actionManager.step();
     }
 
     private void clean() {
@@ -79,13 +80,13 @@ public class ShooterGame extends ApplicationAdapter {
         world = new World(new Vector2(0, 0), true);
         player = new Player(world);
         debugRenderer = new Box2DDebugRenderer();
-        actionManager = new ActionManager();
+        actionController = new ActionController();
         ground = new Ground();
         renderer = new Renderer();
         bulletController = new BulletController(world,renderer);
-        processor = new PlayerControl(player, actionManager, bulletController);
-        zombieController = new ZombieController(world,actionManager,player, renderer);
-        contactController = new ContactController(zombieController,bulletController);
+        processor = new PlayerControl(player, actionController, bulletController);
+        zombieController = new ZombieController(world, actionController,player, renderer);
+        contactController = new ContactController(zombieController,bulletController, actionController, player);
 
         world.setContactListener(contactController);
         renderer.add(0,ground);
@@ -93,6 +94,7 @@ public class ShooterGame extends ApplicationAdapter {
         renderer.add(100,new PlayerStatsRender(player));
 
         controllers.add(contactController);
+        controllers.add(actionController);
         controllers.add(bulletController);
         controllers.add(zombieController);
     }

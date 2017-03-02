@@ -45,7 +45,6 @@ public class BulletController implements Controller {
         for (Bullet bullet : bulletList){
             if (!rectangle.contains(bullet.getPosition())){
                 removeList.add(bullet);
-                renderer.remove(2,bullet);
             }
         }
 

@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.maxiannicu.shooter.bodies.Player;
-import com.maxiannicu.shooter.bodies.action.ActionManager;
+import com.maxiannicu.shooter.controller.ActionController;
 import com.maxiannicu.shooter.bodies.action.MoveToAction;
 import com.maxiannicu.shooter.controller.BulletController;
 import com.maxiannicu.shooter.utils.MathUtils;
@@ -15,12 +15,12 @@ import com.maxiannicu.shooter.utils.MathUtils;
  */
 public class PlayerControl implements InputProcessor {
     private final Player player;
-    private final ActionManager actionManager;
+    private final ActionController actionController;
     private final BulletController bulletController;
 
-    public PlayerControl(Player player, ActionManager actionManager, BulletController bulletController) {
+    public PlayerControl(Player player, ActionController actionController, BulletController bulletController) {
         this.player = player;
-        this.actionManager = actionManager;
+        this.actionController = actionController;
         this.bulletController = bulletController;
     }
 
@@ -43,7 +43,7 @@ public class PlayerControl implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button){
             case Input.Buttons.RIGHT :
-                actionManager.addAction(new MoveToAction(new Vector2(screenX,getMapY(screenY)),player),true);
+                actionController.addAction(new MoveToAction(new Vector2(screenX,getMapY(screenY)),player),true);
                 break;
             case Input.Buttons.LEFT :
                 bulletController.shoot(player,new Vector2(screenX,getMapY(screenY)));
