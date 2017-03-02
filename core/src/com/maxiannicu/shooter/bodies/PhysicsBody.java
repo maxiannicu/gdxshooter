@@ -1,19 +1,27 @@
 package com.maxiannicu.shooter.bodies;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 /**
  * Created by nicu on 3/1/17.
  */
 public abstract class PhysicsBody extends SpriteBody {
+    private final World world;
     protected Body body;
     protected Fixture fixture;
 
     public PhysicsBody(World world, String spriteTexture) {
         super(spriteTexture);
-        body = world.createBody(getBodyDef());
+        this.world = world;
+        body = this.world.createBody(getBodyDef());
         fixture = body.createFixture(getFixtureDef());
+        fixture.setUserData(this);
+    }
+
+    public void destroy(){
+        world.destroyBody(body);
     }
 
     @Override
@@ -23,7 +31,6 @@ public abstract class PhysicsBody extends SpriteBody {
 
         super.render(batch);
     }
-
 
     @Override
     public void setX(float value) {
@@ -35,6 +42,14 @@ public abstract class PhysicsBody extends SpriteBody {
     public void setY(float value) {
         body.setTransform(getX(),value,0);
         updateSpritePosition();
+    }
+
+    public void setRotationAngle(float angle){
+        body.setTransform(body.getPosition(),angle);
+    }
+
+    public float getRotationAngle(){
+        return body.getAngle();
     }
 
     private void updateSpriteRotation() {

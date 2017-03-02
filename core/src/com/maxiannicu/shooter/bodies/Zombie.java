@@ -9,10 +9,14 @@ import com.badlogic.gdx.physics.box2d.World;
  * Created by nicu on 3/2/17.
  */
 public class Zombie extends DynamicPhysicsBody {
-    private final static int MAX_VELOCITY = 300;
+    private final static int MAX_VELOCITY = 200;
 
     public Zombie(World world) {
         super(world, "zoimbie1_stand.png");
+    }
+
+    public int getAttack(){
+        return 10+(int)(Math.random() * 10);
     }
 
     @Override

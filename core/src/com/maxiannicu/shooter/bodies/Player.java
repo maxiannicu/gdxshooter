@@ -10,9 +10,10 @@ import com.badlogic.gdx.physics.box2d.World;
  */
 public class Player extends DynamicPhysicsBody {
     private final static float MAX_VELOCITY = 400;
+    private int health = 100;
 
     public Player(World world) {
-        super(world,"hitman1_stand.png");
+        super(world,"hitman.png");
     }
 
     @Override
@@ -25,16 +26,17 @@ public class Player extends DynamicPhysicsBody {
         return fixtureDef;
     }
 
-    public void setRotationAngle(float angle){
-        body.setTransform(body.getPosition(),angle);
-    }
-
-    public float getRotationAngle(){
-        return body.getAngle();
-    }
 
     @Override
     public float getMaxVelocity() {
         return MAX_VELOCITY;
+    }
+
+    public void receiveAttack(int damage){
+        health = Math.max(0,health-damage);
+    }
+
+    public int getHealth() {
+        return health;
     }
 }

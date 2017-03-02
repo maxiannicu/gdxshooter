@@ -1,4 +1,4 @@
-package com.maxiannicu.shooter.controller;
+package com.maxiannicu.shooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,18 +7,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.maxiannicu.shooter.bodies.Player;
 import com.maxiannicu.shooter.bodies.action.ActionManager;
 import com.maxiannicu.shooter.bodies.action.MoveToAction;
+import com.maxiannicu.shooter.controller.BulletController;
 import com.maxiannicu.shooter.utils.MathUtils;
 
 /**
  * Created by nicu on 3/1/17.
  */
-public class PlayerController implements InputProcessor {
-    private Player player;
-    private ActionManager actionManager;
+public class PlayerControl implements InputProcessor {
+    private final Player player;
+    private final ActionManager actionManager;
+    private final BulletController bulletController;
 
-    public PlayerController(Player player,ActionManager actionManager) {
+    public PlayerControl(Player player, ActionManager actionManager, BulletController bulletController) {
         this.player = player;
         this.actionManager = actionManager;
+        this.bulletController = bulletController;
     }
 
     @Override
@@ -38,8 +41,13 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.RIGHT) {
-            actionManager.addAction(new MoveToAction(new Vector2(screenX,getMapY(screenY)),player),true);
+        switch (button){
+            case Input.Buttons.RIGHT :
+                actionManager.addAction(new MoveToAction(new Vector2(screenX,getMapY(screenY)),player),true);
+                break;
+            case Input.Buttons.LEFT :
+                bulletController.shoot(player,new Vector2(screenX,getMapY(screenY)));
+                break;
         }
         return false;
     }
@@ -68,5 +76,4 @@ public class PlayerController implements InputProcessor {
     private int getMapY(int screenY) {
         return Gdx.graphics.getHeight() - screenY;
     }
-
 }

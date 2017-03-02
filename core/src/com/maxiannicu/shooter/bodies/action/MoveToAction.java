@@ -8,8 +8,8 @@ import com.maxiannicu.shooter.bodies.PhysicsBody;
  * Created by nicu on 3/2/17.
  */
 public class MoveToAction implements Action {
-    private Vector2 point;
-    private DynamicPhysicsBody body;
+    protected Vector2 point;
+    protected DynamicPhysicsBody body;
     private static final float DONE_DELTA = 10;
 
     public MoveToAction(Vector2 point, DynamicPhysicsBody body) {
@@ -30,7 +30,7 @@ public class MoveToAction implements Action {
         Vector2 difference = getDiffVector();
         float desiredVelocity = body.getMaxVelocity();
 
-        Vector2 velocity = difference.scl(1.0f/difference.len()).scl(desiredVelocity);
+        Vector2 velocity = difference.setLength(desiredVelocity);
         body.setVelocity(velocity);
     }
 

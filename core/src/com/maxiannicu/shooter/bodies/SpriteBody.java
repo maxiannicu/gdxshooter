@@ -21,6 +21,12 @@ public class SpriteBody implements Renderable {
         sprite.draw(batch);
     }
 
+
+    public void setPosition(Vector2 position){
+        setX(position.x);
+        setY(position.y);
+    }
+
     public void setX(float value){
         sprite.setX(value - getWidth()/2);
     }

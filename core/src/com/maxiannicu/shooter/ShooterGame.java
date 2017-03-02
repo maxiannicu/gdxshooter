@@ -4,14 +4,19 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.maxiannicu.shooter.bodies.Ground;
 import com.maxiannicu.shooter.bodies.Player;
 import com.maxiannicu.shooter.bodies.action.ActionManager;
-import com.maxiannicu.shooter.controller.PlayerController;
+import com.maxiannicu.shooter.controller.BulletController;
+import com.maxiannicu.shooter.controller.ContactController;
+import com.maxiannicu.shooter.controller.Controller;
 import com.maxiannicu.shooter.controller.ZombieController;
+import com.maxiannicu.shooter.rendering.PlayerStatsRender;
 import com.maxiannicu.shooter.rendering.Renderer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShooterGame extends ApplicationAdapter {
     private Player player;
@@ -19,15 +24,17 @@ public class ShooterGame extends ApplicationAdapter {
     private Box2DDebugRenderer debugRenderer;
     private ActionManager actionManager;
     private Ground ground;
-    private PlayerController processor;
+    private PlayerControl processor;
     private Renderer renderer;
     private ZombieController zombieController;
+    private BulletController bulletController;
+    private ContactController contactController;
+    private List<Controller> controllers = new ArrayList<Controller>();
 
     @Override
     public void create() {
         resolveDependencies();
-        player.setX(100);
-        player.setY(100);
+        player.setPosition(new Vector2(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2));
 
         Gdx.graphics.setResizable(false);
         Gdx.input.setInputProcessor(processor);
@@ -48,7 +55,7 @@ public class ShooterGame extends ApplicationAdapter {
     @Override
     public void render() {
         clean();
-        zombieController.step();
+        stepControllers();
         simulatePhysics();
         renderer.render();
         debugRenderer.render(world,renderer.getBatch().getProjectionMatrix());
@@ -74,13 +81,25 @@ public class ShooterGame extends ApplicationAdapter {
         debugRenderer = new Box2DDebugRenderer();
         actionManager = new ActionManager();
         ground = new Ground();
-        processor = new PlayerController(player, actionManager);
         renderer = new Renderer();
+        bulletController = new BulletController(world,renderer);
+        processor = new PlayerControl(player, actionManager, bulletController);
         zombieController = new ZombieController(world,actionManager,player, renderer);
+        contactController = new ContactController(zombieController,bulletController);
 
+        world.setContactListener(contactController);
         renderer.add(0,ground);
         renderer.add(1,player);
+        renderer.add(100,new PlayerStatsRender(player));
+
+        controllers.add(contactController);
+        controllers.add(bulletController);
+        controllers.add(zombieController);
     }
 
-
+    private void stepControllers() {
+        for (Controller controller : controllers){
+            controller.step();
+        }
+    }
 }
